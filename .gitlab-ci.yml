@@ -1,0 +1,22 @@
+image: python:slim
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip/
+
+
+before_script:
+  - python -V
+  - pip install -r python-requirements.txt
+
+stages:
+  - languages
+
+test-languages:
+  stage: languages
+  script:
+    - time python start.py languages data/20191101/12/
+

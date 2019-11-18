@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta property="og:url" content="https://www.blendernation.com/2019/11/01/check-out-promising-open-source-3d-painting-tool-armorpaint/"/>
+    <meta property="og:site_name" content="BlenderNation"/>
+    <meta property="article:published_time" content="2019-11-01T12:45:29+00:00"/>
+    <meta property="og:title" content="Check out promising open-source 3D painting tool ArmorPaint"/>
+    <meta property="og:description" content="Paint PBR texture maps via a Substance Painter-like workflow with this slick new tool. Last week, we covered Material Maker, a promising procedural texture-generation tool that many artists hope will become a viable alternative to Adobe's Substance Designer. But is there an open-source alternative to its sister application, Substance Painter? One possibility suggested in theRead More"/>
+  </head>
+  <body>
+    <article>
+      <h1>Check out promising open-source 3D painting tool ArmorPaint</h1>
+      <address><time datetime="2019-11-01T12:45:29+00:00">01 Nov 2019, 12:45</time> by <a rel="author">Jim Thacker</a></address>
+      <p>Paint PBR texture maps via a Substance Painter-like workflow with this slick new tool.</p>
+      <p>Last week, we covered <a href="https://rodzilla.itch.io/material-maker">Material Maker</a>, a promising procedural texture-generation tool that many artists hope will become a viable alternative to Adobe's <a href="https://www.substance3d.com/products/substance-designer">Substance Designer</a>. But is there an open-source alternative to its sister application, <a href="https://www.substance3d.com/products/substance-painter">Substance Painter</a>?</p>
+      <p>One possibility suggested in the <a href="https://www.blendernation.com/2019/10/22/check-out-promising-open-source-texture-creation-tool-material-maker/">comments section</a> of the original story is <a href="https://armorpaint.org/">ArmorPaint</a>: a new 3D painting package being developed by the team behind the <a href="https://armory3d.org/">Armory</a> game engine. It offers a familiar base workflow, an interesting range of more advanced features, and is free to compile from source.</p>
+      <p>The software has been in development since last year, but since the team has just released the first developer builds for ArmorPaint 0.7, now seems a good time to check it out.</p>
+      <figure>
+        <iframe src="https://www.youtube.com/embed/qNHeNetQNvE" width="711" height="400" data-service="Youtube" scrolling="no"/>
+      </figure>
+      <h3>An open-source alternative to Substance Painter?</h3>
+      <p>Like Substance Painter, ArmorPaint enables artists to texture models by painting directly on their surface. You can see the workflow in the video above, which was recorded using the stable 0.6 build.</p>
+      <p>You can import 3D assets in OBJ, FBX and – as of the 0.7 update – STL format, or as Blender scene files. Texture maps can be imported in a range of <a href="https://armorpaint.org/manual/#/?id=import-textures">standard 2D formats</a>, including PSD and HDR.</p>
+      <p>The software includes its own node-based material editor, making it possible to create base materials for the model directly within ArmorPaint, or alternatively, you can import existing sets of PBR texture maps, which ArmorPaint will then automatically assemble into a material.</p>
+      <p>You can then paint material properties onto the model using a set of <a href="https://armorpaint.org/manual/#/?id=tools">Substance Painter-like tools</a>, including a basic paintbrush; an eraser; fill, clone and blur tools; plus an experimental particle brush.</p>
+      <p>Both the 3D view and a 2D view showing the UV layout update in real time: the software is GPU-based, and is described as offering “seamless” 16K texture painting on a “high-end graphics card”.</p>
+      <p>Completed texture maps can be exported as 8-bit JPEG or PNG files or 16-bit/32-bit EXRs. You can also <a href="https://armorpaint.org/manual/#/?id=bake">bake geometry-based texture maps</a>, including AO, Cavity, Curvature and World Space Normal.</p>
+      <figure>
+        <img src="https://media.blendernation.com/wp-content/uploads/2019/10/AmorPaint07_DXRBaking.jpg"/>
+      </figure>
+      <figure>
+        <img src="https://media.blendernation.com/wp-content/uploads/2019/10/AmorPaint07_DXRBaking.jpg"/>
+      </figure>
+      <h3>New plugin system and DXR hardware-accelerated baking</h3>
+      <p>To that, the latest 0.7 developer builds add a <a href="https://armorpaint.org/notes.html">range of new features</a>, from standard workflow must-haves like an auto-save system and support for blending modes when working with layers and brushes, to more advanced features, including the groundwork for a new plugins system.</p>
+      <p>It's intended as a way for users to modify the functionality of existing nodes, or add entirely new node types: as a proof of concept, the devs have implemented recent <a href="https://www.blendernation.com/2019/10/23/embark-studios-backs-blender-development-fund/">Blender Development Fund backers</a> Embark Studios’ <a href="https://medium.com/embarkstudios/texture-synthesis-and-remixing-from-a-single-example-faf5f4e8a5b8">texture synthesis</a> system as an <a href="https://github.com/armory3d/armorpaint_plugins/tree/master/plugin_texsynt">ArmorPaint plugin.</a></p>
+      <p>The 0.7 update also introduces experimental support for baking texture maps – initially just ambient occlusion – using the DXR (DirectX Raytracing) API supported on Nvidia’s current RTX graphics cards: a feature recently introduced in <a href="https://www.substance3d.com/blog/substance-painter-summer-2019">Substance Painter itself</a>, albeit for a wider range of map types.</p>
+      <h3>System requirements</h3>
+      <p>The source code for ArmorPaint is available under a zlib licence, so you can compile it yourself for free. There are instructions for how to do so on <a href="https://github.com/armory3d/armorpaint">GitHub</a>, and Jayanam has recorded a <a href="https://www.blendernation.com/2019/06/04/armorpaint-for-free-build-it-windows/">video tutorial</a> on how to compile the software on Windows 10.</p>
+      <p>Readymade compiled binaries are <a href="https://gumroad.com/l/armorpaint">available via Gumroad</a>, and cost €16 (around $18). Once you’ve bought the software, all further updates are free. There are official builds for Windows and Linux, plus an experimental unsigned macOS build.</p>
+      <p>At the time of posting, ArmorPaint 0.7 is still an experimental developer version, but if it follows the same pattern as 0.6, the new features should reach the stable build within six months.</p>
+      <h4>Links</h4>
+      <ul>
+        <li>
+          <a href="https://armorpaint.org/manual/#/">Read more about ArmorPaint in the online user manual</a>
+        </li>
+        <li>
+          <a href="https://gumroad.com/l/armorpaint">Download compiled binaries of ArmorPaint from Gumroad</a>
+        </li>
+        <li>
+          <a href="https://github.com/armory3d/armorpaint">View the source code for ArmorPaint on GitHub</a>
+        </li>
+      </ul>
+    </article>
+  </body>
+</html>
