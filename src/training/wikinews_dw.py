@@ -44,7 +44,7 @@ def generate_category_file(lang, category):
         for url in results:
             r = get_text_from_url(lang, url)
             length = f.write(r)
-            print(f'[{i}/{len(results)} - {round(i / len(results), 2)}%] Wrote {length} bytes.')
+            print(f'[{i}/{len(results)} - {round(i / len(results), 4) * 100}%] Wrote {length} bytes.')
             i += 1
 
 
