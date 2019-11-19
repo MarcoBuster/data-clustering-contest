@@ -1,6 +1,8 @@
 lxml
+nltk
 langdetect
 
+# training requments below
 bs4
 requests
 wikipedia
