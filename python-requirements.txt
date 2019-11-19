@@ -1,2 +1,4 @@
 lxml
 langdetect
+bs4
+requests
