@@ -22,8 +22,6 @@ def scrape_urls_from_category(lang, category):
                 continue
             urls.append(url)
 
-        print('Next page:', next_page)
-        print('Results', urls)
         next_page_btn = soup.find(id='mw-pages').findAll('a')[-1]
         if ('previous' if lang == "en" else "Предыдущая") in next_page_btn.text:
             break
@@ -42,10 +40,12 @@ def generate_category_file(lang, category):
     with open(f'data/{lang}_{category.lower()}.txt', 'a+') as f:
         results = scrape_urls_from_category(lang, category)
         print(f'Found {len(results)} for {category}-{lang} category.')
+        i = 0
         for url in results:
             r = get_text_from_url(lang, url)
-            print(f'Writing {r}...')
-            f.write(r)
+            length = f.write(r)
+            print(f'[{i}/{len(results)} - {round(i / len(results), 2)}%] Wrote {length} bytes.')
+            i += 1
 
 
 if __name__ == "__main__":
