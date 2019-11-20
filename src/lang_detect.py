@@ -1,5 +1,4 @@
 import langdetect
-from . import common
 
 
 def detect(text):
@@ -7,4 +6,3 @@ def detect(text):
         return langdetect.detect(text)
     except:
         return None
-

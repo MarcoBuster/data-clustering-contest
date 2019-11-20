@@ -14,7 +14,7 @@ def language(path):
         lang = lang_detect.detect(body)
         if lang not in ACCEPTABLE_LANGUAGES:
             continue
-        results[ACCEPTABLE_LANGUAGES.index(lang)]["articles"].append(file)
+        results[ACCEPTABLE_LANGUAGES.index(lang)]["articles"].append(file.split('/')[-1])
     common.print_json(results)
 
 
