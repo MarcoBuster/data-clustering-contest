@@ -13,7 +13,7 @@ def scrape_urls_from_category(lang, category):
 
         soup = bs4.BeautifulSoup(r.text, "html.parser")
         content = soup.findAll("div", {"class": "mw-content-ltr"})
-        articles = content[2]
+        articles = content[-1]
         links = articles.findAll("a")
         for link in links:
             url = link.get('href')
@@ -47,8 +47,12 @@ def generate_category_file(lang, category):
             print(f'[{i}/{len(results)} - {round(i / len(results) * 100, 2)}%] Wrote {length} bytes.')
             i += 1
 
+# CATEGORIES_EN = ["Culture_and_entertainment", "Health", "Disasters_and_accidents"]
+# CATEGORIES_RU = ["Политика", "Наука_и_технологии", "Происшествия", "Интернет", "Общество", "Спорт", "Экономика", "Преступность_и_право", "Культура", ]
+CATEGORIES_RU = ["Происшествия", "Интернет", "Общество", "Спорт", "Экономика", "Преступность_и_право", "Культура", ]
 
 if __name__ == "__main__":
-    language = input("Which language do you want to scrape? [en/ru]: ")
-    cat = input("Which category do you want to scrape?: ")
-    generate_category_file(language, cat)
+    # language = input("Which language do you want to scrape? [en/ru]: ")
+    # cat = input("Which category do you want to scrape?: ")
+    for cat in CATEGORIES_RU:
+        generate_category_file("ru", cat)
