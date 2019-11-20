@@ -25,4 +25,4 @@ test-languages:
 test-categories:
   stage: categories
   script:
-    - time python start.py categories data/20191101/12
+    - time python start.py categories data/20191101/12/
