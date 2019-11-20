@@ -14,9 +14,15 @@ before_script:
 
 stages:
   - languages
+  - categories
 
 test-languages:
   stage: languages
   script:
     - time python start.py languages data/20191101/12/
 
+
+test-categories:
+  stage: categories
+  script:
+    - time python start.py categories data/20191101/12/
