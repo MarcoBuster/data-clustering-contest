@@ -37,7 +37,7 @@ def get_text_from_url(lang, location):
 
 
 def generate_category_file(lang, category):
-    with open(f'data/{lang}_{category.lower()}.txt', 'a+') as f:
+    with open(f'pretrain_data/{lang}_{category.lower()}.txt', 'a+') as f:
         results = scrape_urls_from_category(lang, category)
         print(f'Found {len(results)} for {category}-{lang} category.')
         i = 0
