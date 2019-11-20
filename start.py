@@ -2,7 +2,7 @@ from src import main as src_main
 
 import sys
 
-SUPPORTED_ACTIONS = ["languages"]
+SUPPORTED_ACTIONS = ["languages", "categories"]
 
 
 def main():
@@ -16,7 +16,9 @@ def main():
     if action == "languages":
         src_main.language(sys.argv[2])
 
+    if action == "categories":
+        src_main.categories(sys.argv[2])
+
 
 if __name__ == "__main__":
     main()
-

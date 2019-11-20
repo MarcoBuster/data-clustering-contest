@@ -1,4 +1,4 @@
-from . import parser, common, lang_detect
+from . import parser, common, lang_detect, categorization
 
 ACCEPTABLE_LANGUAGES = [
     "en",
@@ -15,6 +15,9 @@ def language(path):
         if lang not in ACCEPTABLE_LANGUAGES:
             continue
         results[ACCEPTABLE_LANGUAGES.index(lang)]["articles"].append(file)
+    common.print_json(results)
 
-    print(f'READ: {len(files)}')
+
+def categories(path):
+    results = categorization.categorize(path)
     common.print_json(results)
