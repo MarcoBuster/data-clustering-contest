@@ -1,4 +1,4 @@
-from . import parser, common, lang_detect, categorization
+from . import parser, common, lang_detect, categorization, news_threads
 
 ACCEPTABLE_LANGUAGES = [
     "en",
@@ -20,4 +20,9 @@ def language(path):
 
 def categories(path):
     results = categorization.categorize(path)
+    common.print_json(results)
+
+
+def threads(path):
+    results = news_threads.split_in_threads(path)
     common.print_json(results)

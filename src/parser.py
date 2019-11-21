@@ -32,3 +32,29 @@ def parse_file(contents):
     print('[TEXT]', body)
     """
     return body
+
+
+def get_title_and_summary(contents):
+    root = html_parser.fromstring(contents)
+    _childrens = root.getchildren()
+    head, body = _childrens[0], _childrens[1]
+    article = body.getchildren()[0]
+    title = article.find("h1").text
+    body = article.text_content()
+    return title, ' '.join(body.split()[:20])
+
+
+def ranking_score(contents):
+    root = html_parser.fromstring(contents)
+    _childrens = root.getchildren()
+    head, body = _childrens[0], _childrens[1]
+    article = body.getchildren()[0]
+    words = len(article.text_content().split())
+    paragraphs = article.findall("p")
+    links = 0
+    for p in paragraphs:
+        hrefs = len(p.findall("a"))
+        if hrefs > 0:
+            links += hrefs
+    figures = len(article.findall("figure"))
+    return (words // 10) + (figures * 3) + (links * 1.5)
