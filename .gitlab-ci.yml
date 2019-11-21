@@ -15,6 +15,7 @@ before_script:
 stages:
   - languages
   - categories
+  - threads
 
 test-languages:
   stage: languages
@@ -26,3 +27,9 @@ test-categories:
   stage: categories
   script:
     - time python start.py categories data/20191101/12/
+
+
+test-threads:
+  stage: threads
+  script:
+    - time python start.py threads data/20191101/12/
