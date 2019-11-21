@@ -8,7 +8,7 @@ from .lang_detect import detect as lang_detect
 from .parser import parse_file
 from .training.train import generate_ngrams
 
-CATEGORIES = ["economy", "entertainment", "society", "sports"]
+CATEGORIES = ["economy", "entertainment", "society", "sports", "science", "technology"]
 PROFILE_DATA = "src/training/profile_data"
 
 
