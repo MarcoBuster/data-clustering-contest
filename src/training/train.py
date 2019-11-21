@@ -12,13 +12,14 @@ RUSSIAN_STOPWORDS = ['викимедиа', 'и', 'в', 'во', 'не', 'что',
 
 
 def clean_text(text):
-    return [w for w in re.sub(r"[^A-Za-z \u0400-\u04FF]+/gu", "", text).lower().strip().split() if w not in ENGLISH_STOPWORDS and len(w) > 2]
+    return [w for w in re.sub(r"[^A-Za-z \u0400-\u04FF]+", "", text).lower().strip().split()
+            if w not in ENGLISH_STOPWORDS + RUSSIAN_STOPWORDS and len(w) > 2]
 
 
-def generate_ngrams(text):
+def generate_ngrams(text, maximum=5):
     text = clean_text(text)
     result = []
-    for i in range(1, 6):
+    for i in range(1, maximum+1):
         result += list(ngrams_create(text, i))
     ordered_ngrams = list()
     for ngr in Counter(result).most_common(350):
