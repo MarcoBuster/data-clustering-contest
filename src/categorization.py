@@ -8,12 +8,11 @@ from .lang_detect import detect as lang_detect
 from .parser import parse_file
 from .training.train import generate_ngrams
 
-CATEGORIES = ["economy", "entertainment", "society", "sports", "science", "technology"]
-PROFILE_DATA = "src/training/profile_data"
+import config
 
 
 def _read_profile(lang, cat):
-    with open(f'{PROFILE_DATA}/{lang}_{cat}.pickle', 'rb') as pf:
+    with open(f'{config.PROFILE_DATA}/{lang}_{cat}.pickle', 'rb') as pf:
         return pickle.load(pf)
 
 
@@ -25,13 +24,13 @@ def _cat_file(file_path, cat_profiles):
         return None  # another language
 
     ngrams = generate_ngrams(contents)
-    guesses = {c: 0 for c in CATEGORIES}
-    iter_cat = iter(CATEGORIES)
+    guesses = {c: 0 for c in config.CATEGORIES}
+    iter_cat = iter(config.CATEGORIES)
     for category in cat_profiles[lang]:
         guesses[next(iter_cat)] = nltk.jaccard_distance(ngrams, category)
 
     min_value = min(guesses, key=guesses.get)
-    if guesses[min_value] > 0.97:
+    if guesses[min_value] > config.CATEGORIZATION_MAX_DISTANCE:
         guess = "other"
     else:
         guess = min_value
@@ -41,7 +40,7 @@ def _cat_file(file_path, cat_profiles):
 def categorize(path):
     cat_profiles = {"en": [], "ru": []}
     result = []
-    for category in CATEGORIES:
+    for category in config.CATEGORIES:
         cat_profiles["en"].append(_read_profile("en", category))
         cat_profiles["ru"].append(_read_profile("ru", category))
         result.append({

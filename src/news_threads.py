@@ -1,7 +1,9 @@
 from . import parser, lang_detect
 from .training import train
+
 import glob
 import nltk
+import config
 
 
 def split_in_threads(path):
@@ -12,12 +14,12 @@ def split_in_threads(path):
         with open(file, 'r') as f:
             contents = f.read()
             title, summary = parser.get_title_and_summary(contents)
-            if lang_detect.detect(title + ' ' + summary) not in ["en", "ru"]:
+            if lang_detect.detect(title if title else '' + ' ' + summary) not in config.LANGUAGES:
                 continue
         file_name = file.split('/')[-1]
         files.append(file_name)
         files_contents[file_name] = (title, contents)
-        ngrams.append(train.generate_ngrams(title + ' ' + summary, 3))
+        ngrams.append(train.generate_ngrams(title if title else '' + ' ' + summary, 3))
 
     length = len(ngrams)
     similar = []
@@ -26,7 +28,7 @@ def split_in_threads(path):
             if j < i:
                 continue
             dist = nltk.jaccard_distance(ngrams[i], ngrams[j])
-            if dist < 0.92 and dist != 0:
+            if dist < config.THREADING_MAX_DISTANCE and dist != 0:
                 similar.append((files[i], files[j]))
 
     threads = []

@@ -1,8 +1,8 @@
-lxml
-nltk
-langdetect
+lxml==4.4.1
+nltk==3.4.5
+langdetect==1.0.7
 
-# training requments below
-bs4
-requests
-wikipedia
+# comment out below if you want to train data from wikinews
+# bs4
+# requests
+# wikipedia
