@@ -10,16 +10,16 @@ def split_in_threads(path):
     ngrams = []
     files = []
     files_contents = {}
-    for file in glob.glob(path + '*.html'):
+    for file in glob.glob(path + "*.html"):
         with open(file, 'r') as f:
             contents = f.read()
             title, summary = parser.get_title_and_summary(contents)
-            if lang_detect.detect(title if title else '' + ' ' + summary) not in config.LANGUAGES:
+            if lang_detect.detect((title if title else '') + ' ' + summary) not in config.LANGUAGES:
                 continue
         file_name = file.split('/')[-1]
         files.append(file_name)
         files_contents[file_name] = (title, contents)
-        ngrams.append(train.generate_ngrams(title if title else '' + ' ' + summary, 3))
+        ngrams.append(train.generate_ngrams((title if title else '') + ' ' + summary, 3))
 
     length = len(ngrams)
     similar = []

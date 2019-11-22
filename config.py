@@ -24,4 +24,4 @@ MAX_NGRAMS = 350
 CATEGORIZATION_MAX_DISTANCE = 0.97
 
 # Max jaccard distance for considering two articles in the same thread
-THREADING_MAX_DISTANCE = 0.92
+THREADING_MAX_DISTANCE = 0.95

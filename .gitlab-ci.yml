@@ -10,8 +10,8 @@ cache:
 
 before_script:
   - python -V
-  - pip install -r python-requirements.txt
   - lscpu
+  - pip install -r python-requirements.txt
 
 stages:
   - languages

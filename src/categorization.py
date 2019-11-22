@@ -16,13 +16,18 @@ def _read_profile(lang, cat):
         return pickle.load(pf)
 
 
-def _cat_file(file_path, cat_profiles):
-    with open(file_path, 'r') as f:
-        contents = parse_file(f.read())
+def load_cat_profiles():
+    cat_profiles = {"en": [], "ru": []}
+    for category in config.CATEGORIES:
+        cat_profiles["en"].append(_read_profile("en", category))
+        cat_profiles["ru"].append(_read_profile("ru", category))
+    return cat_profiles
+
+
+def cat_contents(contents, cat_profiles):
     lang = lang_detect(contents)
     if lang not in ["en", "ru"]:
         return None  # another language
-
     ngrams = generate_ngrams(contents)
     guesses = {c: 0 for c in config.CATEGORIES}
     iter_cat = iter(config.CATEGORIES)
@@ -37,12 +42,17 @@ def _cat_file(file_path, cat_profiles):
     return guess
 
 
+def _cat_file(file_path, cat_profiles):
+    with open(file_path, 'r') as f:
+        contents = parse_file(f.read())
+
+    return cat_contents(contents, cat_profiles)
+
+
 def categorize(path):
-    cat_profiles = {"en": [], "ru": []}
+    cat_profiles = load_cat_profiles()
     result = []
     for category in config.CATEGORIES:
-        cat_profiles["en"].append(_read_profile("en", category))
-        cat_profiles["ru"].append(_read_profile("ru", category))
         result.append({
             "category": category,
             "articles": []

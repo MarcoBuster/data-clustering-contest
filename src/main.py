@@ -1,4 +1,4 @@
-from . import parser, common, lang_detect, categorization, news_threads
+from . import parser, common, lang_detect, categorization, news_threads, ranking
 import config
 
 
@@ -21,4 +21,9 @@ def categories(path):
 
 def threads(path):
     results = news_threads.split_in_threads(path)
+    common.print_json(results)
+
+
+def top(path):
+    results = ranking.rank_threads(path)
     common.print_json(results)
