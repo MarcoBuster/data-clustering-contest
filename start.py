@@ -2,7 +2,7 @@ from src import main as src_main
 
 import sys
 
-SUPPORTED_ACTIONS = ["languages", "categories", "threads", "top"]
+SUPPORTED_ACTIONS = ["languages", "news", "categories", "threads", "top"]
 
 
 def main():
@@ -19,6 +19,9 @@ def main():
 
     if action == "languages":
         src_main.language(path)
+
+    if action == "news":
+        src_main.news(path)
 
     elif action == "categories":
         src_main.categories(path)

@@ -1,4 +1,4 @@
-from . import parser, common, lang_detect, categorization, news_threads, ranking
+from . import parser, common, lang_detect, is_news, categorization, news_threads, ranking
 import config
 
 
@@ -13,6 +13,10 @@ def language(path):
         results[config.LANGUAGES.index(lang)]["articles"].append(file.split('/')[-1])
     common.print_json(results)
 
+
+def news(path):
+    results = is_news.detect(path)
+    common.print_json(results)
 
 def categories(path):
     results = categorization.categorize(path)
