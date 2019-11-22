@@ -7,6 +7,7 @@ import nltk
 from .lang_detect import detect as lang_detect
 from .parser import parse_file
 from .training.train import generate_ngrams
+from . import is_news
 
 import config
 
@@ -24,10 +25,12 @@ def load_cat_profiles():
     return cat_profiles
 
 
-def cat_contents(contents, cat_profiles):
+def cat_contents(contents, cat_profiles, raw_contents=None):
     lang = lang_detect(contents)
     if lang not in ["en", "ru"]:
         return None  # another language
+    if raw_contents and not is_news.detect(raw_contents):
+        return None
     ngrams = generate_ngrams(contents)
     guesses = {c: 0 for c in config.CATEGORIES}
     iter_cat = iter(config.CATEGORIES)
@@ -44,9 +47,10 @@ def cat_contents(contents, cat_profiles):
 
 def _cat_file(file_path, cat_profiles):
     with open(file_path, 'r') as f:
-        contents = parse_file(f.read())
+        raw_contents = f.read()
+        contents = parse_file(raw_contents)
 
-    return cat_contents(contents, cat_profiles)
+    return cat_contents(raw_contents, contents, cat_profiles)
 
 
 def categorize(path):

@@ -1,4 +1,4 @@
-from . import parser, lang_detect
+from . import parser, lang_detect, is_news
 from .training import train
 
 import glob
@@ -13,6 +13,8 @@ def split_in_threads(path):
     for file in glob.glob(path + "*.html"):
         with open(file, 'r') as f:
             contents = f.read()
+            if not is_news.detect(contents):
+                continue
             title, summary = parser.get_title_and_summary(contents)
             if lang_detect.detect((title if title else '') + ' ' + summary) not in config.LANGUAGES:
                 continue

@@ -18,6 +18,7 @@ def news(path):
     results = is_news.detect(path)
     common.print_json(results)
 
+
 def categories(path):
     results = categorization.categorize(path)
     common.print_json(results)
