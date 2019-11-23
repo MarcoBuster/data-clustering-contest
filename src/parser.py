@@ -1,5 +1,33 @@
 import lxml.html as html_parser
 from . import lang_detect
+import config
+
+
+NEWS_WORDS = {
+    "en": [
+        "news",
+        "breaking",
+        "breaking news",
+        "today",
+        "yesterday"
+        "this evening",
+        "this afternoon",
+        "happened",
+        "why",
+        "rescued",
+        "player", "players",
+    ],
+}
+NOT_NEWS_WORDS = {
+    "en": [
+        "top",
+        "how to",
+        "best",
+        "gift", "gifts",
+        "best",
+        "your",
+    ]
+}
 
 
 def meta_tags(head):
@@ -20,9 +48,8 @@ def get_title_and_summary(contents):
     return title, ' '.join(body.split()[:20])
 
 
-def ranking_score(contents):
-    root = html_parser.fromstring(contents)
-    _childrens = root.getchildren()
+def ranking_score(html_root):
+    _childrens = html_root.getchildren()
     head, body = _childrens[0], _childrens[1]
     article = body.getchildren()[0]
     words = len(article.text_content().split())
@@ -36,11 +63,27 @@ def ranking_score(contents):
     return (words // 10) + (figures * 3) + (links * 1.5)
 
 
-def parse_file(filename):
+def news_score(html_root, lang):
+    score = 0
+    _childrens = html_root.getchildren()
+    head, body = _childrens[0], _childrens[1]
+    article = body.getchildren()[0]
+    title = article.find("h1").text
+
+    for word in title.split(' '):
+        if word.lower() in NEWS_WORDS[lang]:
+            score += 1.5
+        if word.lower() in NOT_NEWS_WORDS[lang]:
+            score -= 1
+    # words = article.text_content().split()
+    return score > -1
+
+
+def parse_file(filename, compute_ranking_score=False, compute_news_score=False):
     with open(filename, 'r') as f:
         raw_contents = f.read()
-    root = html_parser.fromstring(raw_contents)
-    _childrens = root.getchildren()
+    html_root = html_parser.fromstring(raw_contents)
+    _childrens = html_root.getchildren()
     head, body = _childrens[0], _childrens[1]
     article = body.getchildren()[0]
     title = article.find("h1").text
@@ -60,9 +103,12 @@ def parse_file(filename):
     print('[DATE]', date_published)
     print('[TEXT]', body)
     """
+    lang = lang_detect.detect(contents)
     return {
         'filename': filename.split('/')[-1],
         'title': title,
         'contents': contents,
-        'lang': lang_detect.detect(contents),
+        'lang': lang,
+        'ranking_score': ranking_score(html_root) if lang in config.LANGUAGES and compute_ranking_score else None,
+        'news_score': news_score(html_root, lang) if lang in ["en", ] and compute_news_score else None,
     }
