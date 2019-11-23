@@ -71,7 +71,7 @@ def parse_file(filename, compute_ranking_score=False, compute_news_score=False):
     _childrens = html_root.getchildren()
     head, body = _childrens[0], _childrens[1]
     article = body.getchildren()[0]
-    title = article.text_content()
+    title = article.xpath('normalize-space(//h1)')
     """
     for metadata in meta_tags(head):
         print(metadata)
