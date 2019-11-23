@@ -4,10 +4,8 @@ import multiprocessing as mp
 
 import nltk
 
-from .lang_detect import detect as lang_detect
 from .parser import parse_file
 from .training.train import generate_ngrams
-from . import is_news
 
 import config
 
@@ -25,16 +23,15 @@ def load_cat_profiles():
     return cat_profiles
 
 
-def cat_contents(contents, cat_profiles, raw_contents=None):
-    lang = lang_detect(contents)
-    if lang not in ["en", "ru"]:
-        return None  # another language
-    if raw_contents and not is_news.detect(raw_contents):
+def cat_contents(parsed_file, cat_profiles):
+    if parsed_file["lang"] not in config.LANGUAGES:
         return None
-    ngrams = generate_ngrams(contents)
+    if not parsed_file["news_score"]:
+        return None
+    ngrams = generate_ngrams(parsed_file["contents"])
     guesses = {c: 0 for c in config.CATEGORIES}
     iter_cat = iter(config.CATEGORIES)
-    for category in cat_profiles[lang]:
+    for category in cat_profiles[parsed_file["lang"]]:
         guesses[next(iter_cat)] = nltk.jaccard_distance(ngrams, category)
 
     min_value = min(guesses, key=guesses.get)
@@ -46,11 +43,8 @@ def cat_contents(contents, cat_profiles, raw_contents=None):
 
 
 def _cat_file(file_path, cat_profiles):
-    with open(file_path, 'r') as f:
-        raw_contents = f.read()
-        contents = parse_file(raw_contents)
-
-    return cat_contents(raw_contents, contents, cat_profiles)
+    parsed_file = parse_file(file_path, compute_news_score=True)
+    return cat_contents(parsed_file, cat_profiles)
 
 
 def categorize(path):

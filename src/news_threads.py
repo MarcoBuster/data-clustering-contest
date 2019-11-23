@@ -8,20 +8,19 @@ import config
 
 def split_in_threads(path):
     ngrams = []
-    files = []
-    files_contents = {}
+    parsed_files = []
+    index_parsed_files = {}
     for file in glob.glob(path + "*.html"):
-        with open(file, 'r') as f:
-            contents = f.read()
-            if not is_news.detect(contents):
-                continue
-            title, summary = parser.get_title_and_summary(contents)
-            if lang_detect.detect((title if title else '') + ' ' + summary) not in config.LANGUAGES:
-                continue
-        file_name = file.split('/')[-1]
-        files.append(file_name)
-        files_contents[file_name] = (title, contents)
-        ngrams.append(train.generate_ngrams((title if title else '') + ' ' + summary, 3))
+        parsed_file = parser.parse_file(file, compute_news_score=True, compute_ranking_score=True)
+        if parsed_file["lang"] not in config.LANGUAGES:
+            continue
+        if not parsed_file["news_score"]:
+            continue
+
+        ngram_string = (parsed_file["title"] if parsed_file["title"] else '') + ' '.join(parsed_file["contents"].split()[:20])
+        ngrams.append(train.generate_ngrams(ngram_string, 3))
+        parsed_files.append(parsed_file)
+        index_parsed_files[parsed_file["filename"]] = parsed_file
 
     length = len(ngrams)
     similar = []
@@ -31,27 +30,28 @@ def split_in_threads(path):
                 continue
             dist = nltk.jaccard_distance(ngrams[i], ngrams[j])
             if dist < config.THREADING_MAX_DISTANCE and dist != 0:
-                similar.append((files[i], files[j]))
+                similar.append((parsed_files[i], parsed_files[j]))
 
+    print(len(similar))
     threads = []
     for element in similar:
         not_in = True
         for r in enumerate(threads):
-            cond_a = element[0] in r[1]["articles"]
-            cond_b = element[1] in r[1]["articles"]
+            cond_a = element[0]["filename"] in r[1]["articles"]
+            cond_b = element[1]["filename"] in r[1]["articles"]
             if not cond_a and not cond_b:
                 continue
             elif cond_a and not cond_b:
-                threads[r[0]]["articles"].append(element[1])
+                threads[r[0]]["articles"].append(element[1]["filename"])
             elif not cond_a and cond_a:
-                threads[r[0]]["articles"].append(element[0])
+                threads[r[0]]["articles"].append(element[0]["filename"])
             not_in = False
         if not_in:
             threads.append({
-                "articles": [element[0], element[1]]
+                "articles": [element[0]["filename"], element[1]["filename"]]
             })
 
     for i in range(len(threads)):
-        threads[i]["title"] = files_contents[min(threads[i]["articles"], key=lambda e: len(files_contents[e][0]))][0]
-        threads[i]["articles"].sort(key=lambda e: parser.ranking_score(files_contents[e][1]), reverse=True)
+        threads[i]["title"] = index_parsed_files[min(threads[i]["articles"], key=lambda e: len(index_parsed_files[e]["title"]))]["title"]
+        threads[i]["articles"].sort(key=lambda e: index_parsed_files[e]["ranking_score"], reverse=True)
     return threads
