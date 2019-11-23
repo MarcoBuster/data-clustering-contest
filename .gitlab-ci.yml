@@ -15,25 +15,33 @@ before_script:
 
 stages:
   - languages
+  - is_news
   - categories
   - threads
+  - rankings
 
 test-languages:
-  when: manual
   stage: languages
   script:
     - time python start.py languages data/20191101/12/
 
 
+test-is_news:
+  stage: is_news
+  script:
+    - time python start.py news data/20191101/12/
+
 test-categories:
-  when: manual
   stage: categories
   script:
     - time python start.py categories data/20191101/12/
 
-
 test-threads:
-  when: manual
   stage: threads
   script:
     - time python start.py threads data/20191101/12/
+
+test-rankings:
+  stage: ranking
+  script:
+    - time python start.py top data/2019101/12/
