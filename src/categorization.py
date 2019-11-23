@@ -42,7 +42,7 @@ def cat_parsed_file(parsed_file, cat_profiles):
         return None
     if not parsed_file["news_score"]:
         return None
-    return cat_contents(parse_file["contents"], parsed_file["lang"], cat_profiles)
+    return cat_contents(parsed_file["contents"], parsed_file["lang"], cat_profiles)
 
 
 def _cat_file(file_path, cat_profiles):
