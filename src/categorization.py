@@ -1,13 +1,12 @@
 import glob
-import pickle
 import multiprocessing as mp
+import pickle
 
 import nltk
 
+import config
 from .parser import parse_file
 from .training.train import generate_ngrams
-
-import config
 
 
 def _read_profile(lang, cat):
@@ -23,15 +22,11 @@ def load_cat_profiles():
     return cat_profiles
 
 
-def cat_contents(parsed_file, cat_profiles):
-    if parsed_file["lang"] not in config.LANGUAGES:
-        return None
-    if not parsed_file["news_score"]:
-        return None
-    ngrams = generate_ngrams(parsed_file["contents"])
+def cat_contents(contents, lang, cat_profiles):
+    ngrams = generate_ngrams(contents)
     guesses = {c: 0 for c in config.CATEGORIES}
     iter_cat = iter(config.CATEGORIES)
-    for category in cat_profiles[parsed_file["lang"]]:
+    for category in cat_profiles[lang]:
         guesses[next(iter_cat)] = nltk.jaccard_distance(ngrams, category)
 
     min_value = min(guesses, key=guesses.get)
@@ -42,9 +37,17 @@ def cat_contents(parsed_file, cat_profiles):
     return guess
 
 
+def cat_parsed_file(parsed_file, cat_profiles):
+    if parsed_file["lang"] not in config.LANGUAGES:
+        return None
+    if not parsed_file["news_score"]:
+        return None
+    return cat_contents(parse_file["contents"], parsed_file["lang"], cat_profiles)
+
+
 def _cat_file(file_path, cat_profiles):
     parsed_file = parse_file(file_path, compute_news_score=True)
-    return cat_contents(parsed_file, cat_profiles)
+    return cat_parsed_file(parsed_file, cat_profiles)
 
 
 def categorize(path):

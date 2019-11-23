@@ -1,12 +1,13 @@
-from . import parser, lang_detect, is_news
+import glob
+
+import nltk
+
+import config
+from . import parser
 from .training import train
 
-import glob
-import nltk
-import config
 
-
-def split_in_threads(path):
+def divide_in_threads(path):
     ngrams = []
     parsed_files = []
     index_parsed_files = {}
@@ -32,7 +33,6 @@ def split_in_threads(path):
             if dist < config.THREADING_MAX_DISTANCE and dist != 0:
                 similar.append((parsed_files[i], parsed_files[j]))
 
-    print(len(similar))
     threads = []
     for element in similar:
         not_in = True
@@ -54,4 +54,8 @@ def split_in_threads(path):
     for i in range(len(threads)):
         threads[i]["title"] = index_parsed_files[min(threads[i]["articles"], key=lambda e: len(index_parsed_files[e]["title"]))]["title"]
         threads[i]["articles"].sort(key=lambda e: index_parsed_files[e]["ranking_score"], reverse=True)
-    return threads
+    return threads, index_parsed_files
+
+
+def generate_threads(path):
+    return divide_in_threads(path)[0]

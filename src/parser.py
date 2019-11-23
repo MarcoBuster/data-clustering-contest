@@ -1,7 +1,7 @@
 import lxml.html as html_parser
-from . import lang_detect
-import config
 
+import config
+from . import lang_detect
 
 NEWS_WORDS = {
     "en": [

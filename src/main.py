@@ -1,5 +1,5 @@
-from . import parser, common, is_news, categorization, news_threads, ranking
 import config
+from . import parser, common, is_news, categorization, news_threads, ranking
 
 
 def language(path):
@@ -24,7 +24,7 @@ def categories(path):
 
 
 def threads(path):
-    results = news_threads.split_in_threads(path)
+    results = news_threads.generate_threads(path)
     common.print_json(results)
 
 

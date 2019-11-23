@@ -1,6 +1,6 @@
-from src import main as src_main
-
 import sys
+
+from src import main as src_main
 
 SUPPORTED_ACTIONS = ["languages", "news", "categories", "threads", "top"]
 
