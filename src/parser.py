@@ -31,21 +31,12 @@ NOT_NEWS_WORDS = {
 
 
 def meta_tags(head):
+    # TODO: Unused for now
     for meta in head.findall("meta"):
         attrib = meta.attrib
         if not attrib.get('property') or not attrib.get('content'):
             continue
         yield (attrib.get('property').split(':')[1], attrib.get('content'))
-
-
-def get_title_and_summary(contents):
-    root = html_parser.fromstring(contents)
-    _childrens = root.getchildren()
-    head, body = _childrens[0], _childrens[1]
-    article = body.getchildren()[0]
-    title = article.find("h1").text
-    body = article.text_content()
-    return title, ' '.join(body.split()[:20])
 
 
 def ranking_score(html_root):
@@ -63,19 +54,13 @@ def ranking_score(html_root):
     return (words // 10) + (figures * 3) + (links * 1.5)
 
 
-def news_score(html_root, lang):
+def news_score(title, lang):
     score = 0
-    _childrens = html_root.getchildren()
-    head, body = _childrens[0], _childrens[1]
-    article = body.getchildren()[0]
-    title = article.find("h1").text
-
     for word in title.split(' '):
         if word.lower() in NEWS_WORDS[lang]:
             score += 1.5
         if word.lower() in NOT_NEWS_WORDS[lang]:
             score -= 1
-    # words = article.text_content().split()
     return score > -1
 
 
@@ -86,7 +71,7 @@ def parse_file(filename, compute_ranking_score=False, compute_news_score=False):
     _childrens = html_root.getchildren()
     head, body = _childrens[0], _childrens[1]
     article = body.getchildren()[0]
-    title = article.find("h1").text
+    title = article.text_content()
     """
     for metadata in meta_tags(head):
         print(metadata)
@@ -110,5 +95,5 @@ def parse_file(filename, compute_ranking_score=False, compute_news_score=False):
         'contents': contents,
         'lang': lang,
         'ranking_score': ranking_score(html_root) if lang in config.LANGUAGES and compute_ranking_score else None,
-        'news_score': news_score(html_root, lang) if lang in ["en", ] and compute_news_score else None,
+        'news_score': news_score(title, lang) if lang in ["en", ] and compute_news_score else None,
     }
