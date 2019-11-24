@@ -5,14 +5,26 @@ import nltk
 import config
 from . import parser
 from .training import train
+import multiprocessing as mp
 
 
 def divide_in_threads(path):
     ngrams = []
     parsed_files = []
     index_parsed_files = {}
-    for file in glob.glob(path + "*.html"):
-        parsed_file = parser.parse_file(file, compute_news_score=True, compute_ranking_score=True)
+    pool = mp.Pool(processes=8)
+    futures = {}
+    files = glob.glob(path + "*.html")
+    for file in files:
+        futures[file] = pool.apply_async(parser.parse_file, (file, ), {
+            'compute_ranking_score': True,
+            'compute_news_score': True,
+        })
+    pool.close()
+    pool.join()
+
+    for future in futures:
+        parsed_file = futures[future].get()
         if parsed_file["lang"] not in config.LANGUAGES:
             continue
         if not parsed_file["news_score"]:
@@ -54,7 +66,8 @@ def divide_in_threads(path):
     for i in range(len(threads)):
         threads[i]["title"] = index_parsed_files[min(threads[i]["articles"], key=lambda e: len(index_parsed_files[e]["title"]))]["title"]
         threads[i]["articles"].sort(key=lambda e: index_parsed_files[e]["ranking_score"], reverse=True)
-    return threads, index_parsed_files
+
+    return [], index_parsed_files
 
 
 def generate_threads(path):
