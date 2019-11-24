@@ -67,7 +67,7 @@ def divide_in_threads(path):
         threads[i]["title"] = index_parsed_files[min(threads[i]["articles"], key=lambda e: len(index_parsed_files[e]["title"]))]["title"]
         threads[i]["articles"].sort(key=lambda e: index_parsed_files[e]["ranking_score"], reverse=True)
 
-    return [], index_parsed_files
+    return threads, index_parsed_files
 
 
 def generate_threads(path):
