@@ -7,7 +7,6 @@ cache:
   paths:
     - .cache/pip/
 
-
 before_script:
   - python -V
   - lscpu
@@ -15,32 +14,102 @@ before_script:
 
 stages:
   - languages
-  - is_news
+  - news
   - categories
   - threads
-  - rankings
+  - top
 
-test-languages:
+
+languages_1101_12:
   stage: languages
+  when: always
   script:
     - time python start.py languages data/20191101/12/
 
-test-is_news:
-  stage: is_news
+languages_1108_18:
+  stage: languages
+  when: always
+  script:
+    - time python start.py languages data/20191108/18/
+
+languages_1115_00:
+  stage: languages
+  when: always
+  script:
+    - time python start.py languages data/20191115/00/
+
+
+news_1101_12:
+  stage: news
+  when: always
   script:
     - time python start.py news data/20191101/12/
 
-test-categories:
+news_1108_18:
+  stage: news
+  when: always
+  script:
+    - time python start.py news data/20191108/18/
+
+news_1115_00:
+  stage: news
+  when: always
+  script:
+    - time python start.py news data/20191115/00/
+
+
+categories_1101_12:
   stage: categories
+  when: always
   script:
     - time python start.py categories data/20191101/12/
 
-test-threads:
+categories_1108_18:
+  stage: categories
+  when: always
+  script:
+    - time python start.py categories data/20191108/18/
+
+categories_1115_00:
+  stage: categories
+  when: always
+  script:
+    - time python start.py categories data/20191115/00/
+
+
+threads_1101_12:
   stage: threads
+  when: always
   script:
     - time python start.py threads data/20191101/12/
 
-test-rankings:
-  stage: rankings
+threads_1108_18:
+  stage: threads
+  when: always
   script:
-    - time python start.py top data/2019101/12/
+    - time python start.py threads data/20191108/18/
+
+threads_1115_00:
+  stage: threads
+  when: always
+  script:
+    - time python start.py threads data/20191115/00/
+
+
+top_1101_12:
+  stage: top
+  when: always
+  script:
+    - time python start.py top data/20191101/12/
+
+top_1108_18:
+  stage: top
+  when: always
+  script:
+    - time python start.py top data/20191108/18/
+
+top_1115_00:
+  stage: top
+  when: always
+  script:
+    - time python start.py top data/20191115/00/
