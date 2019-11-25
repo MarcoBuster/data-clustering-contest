@@ -1,15 +1,8 @@
-import config
-from . import parser, common, is_news, categorization, news_threads, ranking
+from . import common, lang_detect, is_news, categorization, news_threads, ranking
 
 
 def language(path):
-    results = [{"lang_code": l, "articles": []} for l in config.LANGUAGES]
-    files = common.get_files(path)
-    for file in files:
-        parsed_file = parser.parse_file(file)
-        if parsed_file["lang"] not in config.LANGUAGES:
-            continue
-        results[config.LANGUAGES.index(parsed_file["lang"])]["articles"].append(parsed_file["filename"])
+    results = lang_detect.process(path)
     common.print_json(results)
 
 
