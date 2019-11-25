@@ -1,7 +1,7 @@
 import lxml.html as html_parser
 
 import config
-from . import lang_detect
+from .modules import lang_detect
 
 NEWS_WORDS = {
     "en": [
@@ -83,11 +83,6 @@ def parse_file(filename, compute_ranking_score=False, compute_news_score=False):
         date_published = "???"
     """
     contents = article.text_content()
-    """
-    print('[TITLE]', title)
-    print('[DATE]', date_published)
-    print('[TEXT]', body)
-    """
     lang = lang_detect.detect(contents)
     return {
         'filename': filename.split('/')[-1],

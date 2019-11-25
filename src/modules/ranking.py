@@ -6,7 +6,7 @@ EXTENDED_CATEGORIES = [*config.CATEGORIES, "other", "any"]
 EXTENDED_CATEGORIES_INDEX = {c: EXTENDED_CATEGORIES.index(c) for c in EXTENDED_CATEGORIES}
 
 
-def rank_threads(path):
+def process(path):
     threads, index_parsed_files = divide_in_threads(path)
     cat_profiles = load_cat_profiles()
 

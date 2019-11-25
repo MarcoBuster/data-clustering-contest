@@ -3,8 +3,8 @@ import glob
 import nltk
 
 import config
-from . import parser
-from .training import train
+from .. import parser
+from ..training import train
 import multiprocessing as mp
 
 
@@ -70,5 +70,5 @@ def divide_in_threads(path):
     return threads, index_parsed_files
 
 
-def generate_threads(path):
+def process(path):
     return divide_in_threads(path)[0]

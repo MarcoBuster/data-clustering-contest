@@ -1,6 +1,6 @@
 import langdetect
 
-from . import common, parser
+from .. import common, parser
 import config
 
 import multiprocessing as mp

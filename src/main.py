@@ -1,4 +1,5 @@
-from . import common, lang_detect, is_news, categorization, news_threads, ranking
+from . import common
+from .modules import lang_detect, is_news, categorization, news_threads, ranking
 
 
 def language(path):
@@ -7,20 +8,20 @@ def language(path):
 
 
 def news(path):
-    results = is_news.detect(path)
+    results = is_news.process(path)
     common.print_json(results)
 
 
 def categories(path):
-    results = categorization.categorize(path)
+    results = categorization.process(path)
     common.print_json(results)
 
 
 def threads(path):
-    results = news_threads.generate_threads(path)
+    results = news_threads.process(path)
     common.print_json(results)
 
 
 def top(path):
-    results = ranking.rank_threads(path)
+    results = ranking.process(path)
     common.print_json(results)

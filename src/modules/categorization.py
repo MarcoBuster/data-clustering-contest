@@ -5,8 +5,8 @@ import pickle
 import nltk
 
 import config
-from .parser import parse_file
-from .training.train import generate_ngrams
+from ..parser import parse_file
+from ..training.train import generate_ngrams
 
 
 def _read_profile(lang, cat):
@@ -50,7 +50,7 @@ def _cat_file(file_path, cat_profiles):
     return cat_parsed_file(parsed_file, cat_profiles)
 
 
-def categorize(path):
+def process(path):
     cat_profiles = load_cat_profiles()
     result = []
     for category in config.CATEGORIES:

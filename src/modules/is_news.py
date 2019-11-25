@@ -1,10 +1,10 @@
 import glob
 import multiprocessing as mp
 
-from . import parser
+from .. import parser
 
 
-def detect(path):
+def process(path):
     files = glob.glob(path + '*.html')
     pool = mp.Pool(processes=8)
     futures = {}
