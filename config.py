@@ -20,6 +20,9 @@ LANGUAGES = ["en", "ru"]
 # Max ngrams to generate per file (either for training or not)
 MAX_NGRAMS = 350
 
+# Max jaccard distance for considering an article written in a language
+LANGUAGE_MAX_DISTANCE = 0.93
+
 # Max jaccard distance for considering an article in a category
 CATEGORIZATION_MAX_DISTANCE = 0.97
 

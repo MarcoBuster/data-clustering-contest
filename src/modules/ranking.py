@@ -22,8 +22,8 @@ def process(path):
         if len(thread["articles"]) == 0:
             continue
         for file in thread["articles"]:
-            thread_contents += ('\n' + index_parsed_files[file]["contents"])
-        category = cat_contents(thread_contents, index_parsed_files[file]["lang"], cat_profiles)
+            thread_contents += ('\n' + index_parsed_files[file].contents)
+        category = cat_contents(thread_contents, index_parsed_files[file].lang(), cat_profiles)
         if category is None:
             category = "other"
         result[EXTENDED_CATEGORIES_INDEX[category]]["threads"].append(thread)
@@ -31,7 +31,7 @@ def process(path):
 
     for i in range(len(result)):
         result[i]["threads"].sort(
-            key=lambda t: sum([*[index_parsed_files[e]["ranking_score"] for e in t["articles"]], len(t["articles"]) * 2]),
+            key=lambda t: sum([*[index_parsed_files[e].ranking_score() for e in t["articles"]], len(t["articles"]) * 2]),
             reverse=True
         )
     return result

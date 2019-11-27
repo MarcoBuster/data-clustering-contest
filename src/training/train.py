@@ -11,13 +11,17 @@ ENGLISH_STOPWORDS = ['wikinews', 'i', 'me', 'my', 'myself', 'we', 'our', 'ours',
 RUSSIAN_STOPWORDS = ['викимедиа', 'и', 'в', 'во', 'не', 'что', 'он', 'на', 'я', 'с', 'со', 'как', 'а', 'то', 'все', 'она', 'так', 'его', 'но', 'да', 'ты', 'к', 'у', 'же', 'вы', 'за', 'бы', 'по', 'только', 'ее', 'мне', 'было', 'вот', 'от', 'меня', 'еще', 'нет', 'о', 'из', 'ему', 'теперь', 'когда', 'даже', 'ну', 'вдруг', 'ли', 'если', 'уже', 'или', 'ни', 'быть', 'был', 'него', 'до', 'вас', 'нибудь', 'опять', 'уж', 'вам', 'ведь', 'там', 'потом', 'себя', 'ничего', 'ей', 'может', 'они', 'тут', 'где', 'есть', 'надо', 'ней', 'для', 'мы', 'тебя', 'их', 'чем', 'была', 'сам', 'чтоб', 'без', 'будто', 'чего', 'раз', 'тоже', 'себе', 'под', 'будет', 'ж', 'тогда', 'кто', 'этот', 'того', 'потому', 'этого', 'какой', 'совсем', 'ним', 'здесь', 'этом', 'один', 'почти', 'мой', 'тем', 'чтобы', 'нее', 'сейчас', 'были', 'куда', 'зачем', 'всех', 'никогда', 'можно', 'при', 'наконец', 'два', 'об', 'другой', 'хоть', 'после', 'над', 'больше', 'тот', 'через', 'эти', 'нас', 'про', 'всего', 'них', 'какая', 'много', 'разве', 'три', 'эту', 'моя', 'впрочем', 'хорошо', 'свою', 'этой', 'перед', 'иногда', 'лучше', 'чуть', 'том', 'нельзя', 'такой', 'им', 'более', 'всегда', 'конечно', 'всю', 'между']
 
 
-def clean_text(text):
+def clean_text(text, only_stopwords=False):
+    if not only_stopwords:
+        return [w for w in re.sub(r"[^A-Za-z \u0400-\u04FF]+", "", text).lower().strip().split()
+                if w not in ENGLISH_STOPWORDS + RUSSIAN_STOPWORDS and len(w) > 2]
+
     return [w for w in re.sub(r"[^A-Za-z \u0400-\u04FF]+", "", text).lower().strip().split()
-            if w not in ENGLISH_STOPWORDS + RUSSIAN_STOPWORDS and len(w) > 2]
+            if w in ENGLISH_STOPWORDS + RUSSIAN_STOPWORDS]
 
 
-def generate_ngrams(text, maximum=5):
-    text = clean_text(text)
+def generate_ngrams(text, maximum=5, only_stopwords=False):
+    text = clean_text(text, only_stopwords=only_stopwords)
     result = []
     for i in range(1, maximum+1):
         result += list(ngrams_create(text, i))
@@ -35,6 +39,12 @@ def main():
             ordered_ngrams = generate_ngrams(contents)
             with open(PROFILE_DATA + filename[len(TRAIN_DATA):].replace('txt', 'pickle'), 'wb+') as df:
                 pickle.dump(ordered_ngrams, df)
+
+    print('Generating language profiles...')
+    with open(PROFILE_DATA + 'en.pickle', 'wb+') as f:
+        pickle.dump(generate_ngrams(' '.join(ENGLISH_STOPWORDS), maximum=1, only_stopwords=True), f)
+    with open(PROFILE_DATA + 'ru.pickle', 'wb+') as f:
+        pickle.dump(generate_ngrams(' '.join(RUSSIAN_STOPWORDS), maximum=1, only_stopwords=True), f)
 
 
 if __name__ == "__main__":
