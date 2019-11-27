@@ -2,7 +2,7 @@ lxml==4.4.1
 nltk==3.4.5
 langdetect==1.0.7
 
-# comment out below if you want to train data from wikinews
+# comment out the lines below if you want to use training tools
 # bs4
 # requests
 # wikipedia
