@@ -65,7 +65,7 @@ def process(path):
 
     files = glob.glob(path + "*.html")
     futures = {}
-    pool = mp.Pool(processes=8)
+    pool = mp.Pool(processes=config.CONCURRENT_PROCESSES)
     for file in files:
         futures[file.split('/')[-1]] = pool.apply_async(_cat_file, (file, cat_profiles))
     pool.close()

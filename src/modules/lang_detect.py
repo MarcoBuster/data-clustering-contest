@@ -1,9 +1,9 @@
+import multiprocessing as mp
+
 import langdetect
 
-from .. import common, parser
 import config
-
-import multiprocessing as mp
+from .. import common, parser
 
 
 def detect(text):
@@ -14,7 +14,7 @@ def detect(text):
 
 
 def process(path):
-    pool = mp.Pool(processes=8)
+    pool = mp.Pool(processes=config.CONCURRENT_PROCESSES)
     futures = {}
     files = common.get_files(path)
     for file in files:

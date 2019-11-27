@@ -3,7 +3,7 @@
 # default values should be ok for
 # "Debian GNU/Linux 10.1 (buster), x86-64 with 8 cores and 16 GB RAM".
 
-# Number of concurrent processes for heavy operations
+# Number of concurrent processes used for slow operations
 CONCURRENT_PROCESSES = 8
 
 # Path to profiles

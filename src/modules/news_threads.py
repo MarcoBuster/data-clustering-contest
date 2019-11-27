@@ -12,7 +12,7 @@ def divide_in_threads(path):
     ngrams = []
     parsed_files = []
     index_parsed_files = {}
-    pool = mp.Pool(processes=8)
+    pool = mp.Pool(processes=config.CONCURRENT_PROCESSES)
     futures = {}
     files = glob.glob(path + "*.html")
     for file in files:
