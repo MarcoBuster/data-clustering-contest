@@ -21,7 +21,7 @@ LANGUAGES = ["en", "ru"]
 MAX_NGRAMS = 350
 
 # Max jaccard distance for considering an article written in a language
-LANGUAGE_MAX_DISTANCE = 0.93
+LANGUAGE_MAX_DISTANCE = 0.87
 
 # Max jaccard distance for considering an article in a category
 CATEGORIZATION_MAX_DISTANCE = 0.97

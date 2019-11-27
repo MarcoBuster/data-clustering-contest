@@ -106,7 +106,7 @@ class ParsedFile:
         for lang in guesses:
             guesses[lang] = nltk.jaccard_distance(stopwords_ngrams, ParsedFile._language_profiles[lang])
         best_guess = min(guesses, key=guesses.get)
-        if guesses[best_guess] < config.LANGUAGE_MAX_DISTANCE:
+        if guesses[best_guess] > config.LANGUAGE_MAX_DISTANCE:
             best_guess = "other"
 
         self._lang = best_guess
