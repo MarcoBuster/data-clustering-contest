@@ -44,7 +44,7 @@ languages_max:
   script:
     - mkdir data/max
     - mv data/*/*/*.html data/max/
-    - time python start.py languages max/
+    - time python start.py languages data/max/
 
 
 news_1101_12:
@@ -71,7 +71,7 @@ news_max:
   script:
     - mkdir data/max
     - mv data/*/*/*.html data/max/
-    - time python start.py news max/
+    - time python start.py news data/max/
 
 
 categories_1101_12:
@@ -98,7 +98,7 @@ categories_max:
   script:
     - mkdir data/max
     - mv data/*/*/*.html data/max/
-    - time python start.py categories max/
+    - time python start.py categories data/max/
 
 
 threads_1101_12:
@@ -125,7 +125,7 @@ threads_max:
   script:
     - mkdir data/max
     - mv data/*/*/*.html data/max/
-    - time python start.py threads max/
+    - time python start.py threads data/max/
 
 
 top_1101_12:
@@ -152,4 +152,4 @@ top_max:
   script:
     - mkdir data/max
     - mv data/*/*/*.html data/max/
-    - time python start.py top max/
+    - time python start.py top data/max/
