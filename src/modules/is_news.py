@@ -16,12 +16,12 @@ def process(path):
     pool.close()
     pool.join()
 
-    result = {"articles": []}
+    results = {"articles": []}
     for future in futures:
         parsed_file = futures[future].get()
         if parsed_file.lang() not in config.LANGUAGES:
             continue
 
         if parsed_file.news_score():
-            result["articles"].append(parsed_file.filename)
-    return result
+            results["articles"].append(parsed_file.filename)
+    return results

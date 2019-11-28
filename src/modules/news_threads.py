@@ -44,29 +44,29 @@ def divide_in_threads(path, before_ranking=False):
             if dist < config.THREADING_MAX_DISTANCE and dist != 0:
                 similar.append((parsed_files[i], parsed_files[j]))
 
-    threads = []
+    results = []
     for element in similar:
         not_in = True
-        for r in enumerate(threads):
+        for r in enumerate(results):
             cond_a = element[0].filename in r[1]["articles"]
             cond_b = element[1].filename in r[1]["articles"]
             if not cond_a and not cond_b:
                 continue
             elif cond_a and not cond_b:
-                threads[r[0]]["articles"].append(element[1].filename)
+                results[r[0]]["articles"].append(element[1].filename)
             elif not cond_a and cond_a:
-                threads[r[0]]["articles"].append(element[0].filename)
+                results[r[0]]["articles"].append(element[0].filename)
             not_in = False
         if not_in:
-            threads.append({
+            results.append({
                 "articles": [element[0].filename, element[1].filename]
             })
 
-    for i in range(len(threads)):
-        threads[i]["title"] = index_parsed_files[min(threads[i]["articles"], key=lambda e: len(index_parsed_files[e].title))].title
-        threads[i]["articles"].sort(key=lambda e: index_parsed_files[e].ranking_score(), reverse=True)
+    for i in range(len(results)):
+        results[i]["title"] = index_parsed_files[min(results[i]["articles"], key=lambda e: len(index_parsed_files[e].title))].title
+        results[i]["articles"].sort(key=lambda e: index_parsed_files[e].ranking_score(), reverse=True)
 
-    return threads, index_parsed_files
+    return results, index_parsed_files
 
 
 def process(path):

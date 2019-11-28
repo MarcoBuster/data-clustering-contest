@@ -6,13 +6,13 @@ from .. import parser
 
 
 def process(path):
-    result = []
+    results = []
     for category in config.CATEGORIES:
-        result.append({
+        results.append({
             "category": category,
             "articles": []
         })
-    result.append({
+    results.append({
         "category": "other",
         "articles": []
     })
@@ -34,5 +34,5 @@ def process(path):
         if not parsed_file.news_score():
             continue
 
-        result[result.index(next(i for i in result if i["category"] == parsed_file.category()))]["articles"].append(file)
-    return result
+        results[results.index(next(i for i in results if i["category"] == parsed_file.category()))]["articles"].append(file)
+    return results
