@@ -58,6 +58,7 @@ def generate_parsed_file(filename, *args, **kwargs):
 
 
 class ParsedFile:
+    # Load the profiles
     _language_profiles = {}
     _cat_profiles = dict((l, dict()) for l in config.LANGUAGES)
     for lang in config.LANGUAGES:
@@ -85,16 +86,18 @@ class ParsedFile:
         self._ranking_score = None
         self._news_score = None
 
+        # Open and parse the file
         with open(self._filename, 'r') as f:
             self.raw_contents = f.read()
         html_root = html_parser.fromstring(self.raw_contents)
-        _childrens = html_root.getchildren()
-        _, body = _childrens[0], _childrens[1]
+        _children = html_root.getchildren()
+        _, body = _children[0], _children[1]
         _article = body.getchildren()[0]
         self.title = _article.xpath('normalize-space(//h1)')
         self.contents = _article.text_content()
         self._stopwords_ngrams = None
 
+        # Pre compute statements
         if 'lang' in pre_compute:
             self.lang()
         if 'category' in pre_compute:
@@ -103,12 +106,8 @@ class ParsedFile:
             self.ranking_score()
         if 'news_score' in pre_compute:
             self.news_score()
-        if 'ngrams' in pre_compute:
-            self.ngrams()
         if 'short_ngrams' in pre_compute:
             self.short_ngrams()
-        if 'stopwords_ngrams' in pre_compute:
-            self.stopwords_ngrams()
 
     def lang(self):
         if self._lang is not None:
@@ -128,9 +127,8 @@ class ParsedFile:
     def category(self):
         if self._category is not None:
             return self._category
-
-        if self.lang() not in config.LANGUAGES:
-            self._category = "other"
+        if self.lang() not in config.LANGUAGES or not self.news_score():
+            self._category = 0
             return self._category
 
         guesses = {c: 0 for c in config.CATEGORIES}
@@ -148,10 +146,13 @@ class ParsedFile:
     def ranking_score(self):
         if self._ranking_score is not None:
             return self._ranking_score
+        if self.lang() not in config.LANGUAGES or not self.news_score():
+            self._ranking_score = 0
+            return self._ranking_score
 
         html_root = html_parser.fromstring(self.raw_contents)
-        _childrens = html_root.getchildren()
-        _, body = _childrens[0], _childrens[1]
+        _children = html_root.getchildren()
+        _, body = _children[0], _children[1]
         _article = body.getchildren()[0]
         words = len(_article.text_content().split())
         paragraphs = _article.findall("p")
@@ -166,6 +167,9 @@ class ParsedFile:
 
     def news_score(self):
         if self._news_score is not None:
+            return self._news_score
+        if self.lang() not in config.LANGUAGES:
+            self._news_score = 0
             return self._news_score
 
         score = 0
@@ -187,7 +191,7 @@ class ParsedFile:
     def short_ngrams(self):
         if self._short_ngrams is not None:
             return self._short_ngrams
-        if self.lang() not in config.LANGUAGES:
+        if self.lang() not in config.LANGUAGES or not self.news_score():
             self._short_ngrams = {}
             return self._short_ngrams
 
