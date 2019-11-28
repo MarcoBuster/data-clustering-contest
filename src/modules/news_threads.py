@@ -7,20 +7,19 @@ from .. import parser
 import multiprocessing as mp
 
 
-def divide_in_threads(path, before_ranking=False):
-    ngrams = []
-    parsed_files = []
-    index_parsed_files = {}
+def divide_in_threads(path):
     pool = mp.Pool(processes=config.CONCURRENT_PROCESSES)
     futures = {}
     files = glob.glob(path + "*.html")
     for file in files:
         futures[file] = pool.apply_async(parser.generate_parsed_file, (file, ), {
-            'pre_compute': ('news_score', 'ranking_score', 'short_ngrams', 'lang', 'category' if before_ranking else ''),
+            'pre_compute': ('news_score', 'ranking_score', 'short_ngrams', 'lang', 'category'),
         })
     pool.close()
     pool.join()
 
+    parsed_files = dict((l, dict((l, list()) for l in [*config.CATEGORIES, "other"])) for l in config.LANGUAGES)
+    index_parsed_files = {}
     for future in futures:
         parsed_file = futures[future].get()
         if parsed_file.lang() not in config.LANGUAGES:
@@ -28,21 +27,23 @@ def divide_in_threads(path, before_ranking=False):
         if not parsed_file.news_score():
             continue
 
-        ngrams.append(parsed_file.short_ngrams())
-        parsed_files.append(parsed_file)
+        parsed_files[parsed_file.lang()][parsed_file.category()].append(parsed_file)
         index_parsed_files[parsed_file.filename] = parsed_file
 
-    length = len(ngrams)
     similar = []
-    for i in range(length):
-        for j in range(length):
-            if j < i:
-                continue
-            if not ngrams[i] or not ngrams[j]:
-                continue
-            dist = nltk.jaccard_distance(ngrams[i], ngrams[j])
-            if dist < config.THREADING_MAX_DISTANCE and dist != 0:
-                similar.append((parsed_files[i], parsed_files[j]))
+    for lang in parsed_files:
+        for cat in parsed_files[lang]:
+            length = len(parsed_files[lang][cat])
+            for i in range(length):
+                for j in range(length):
+                    if j < i:
+                        continue
+                    if not parsed_files[lang][cat][i] or not parsed_files[lang][cat][j]:
+                        continue
+                    dist = nltk.jaccard_distance(parsed_files[lang][cat][i].short_ngrams(),
+                                                 parsed_files[lang][cat][j].short_ngrams())
+                    if dist < config.THREADING_MAX_DISTANCE and dist != 0:
+                        similar.append((parsed_files[lang][cat][i], parsed_files[lang][cat][j]))
 
     results = []
     for element in similar:

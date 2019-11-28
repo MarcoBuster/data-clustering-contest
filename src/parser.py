@@ -17,6 +17,7 @@ NEWS_WORDS = [
     "why",
     "rescued",
     "player", "players",
+    "announced",
     "известие",
     "разрывной",
     "последние новости",
@@ -28,6 +29,7 @@ NEWS_WORDS = [
     "зачем",
     "спасённый",
     "проигрыватель", "проигрыватели",
+    "анонсированный",
 ]
 
 NOT_NEWS_WORDS = [
@@ -37,12 +39,16 @@ NOT_NEWS_WORDS = [
     "gift", "gifts",
     "best",
     "your",
+    "here are my", "here is my",
+    "my favourite",
     "известие",
     "как",
     "лучший",
     "дар", "подарки",
     "лучший",
     "твой",
+    "вот мой", "вот мой",
+    "мой любимый",
 ]
 
 
@@ -180,6 +186,9 @@ class ParsedFile:
 
     def short_ngrams(self):
         if self._short_ngrams is not None:
+            return self._short_ngrams
+        if self.lang() not in config.LANGUAGES:
+            self._short_ngrams = {}
             return self._short_ngrams
 
         ngram_string = self.title + ' '.join(self.contents.split()[:20])

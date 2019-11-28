@@ -6,7 +6,7 @@ EXTENDED_CATEGORIES_INDEX = {c: EXTENDED_CATEGORIES.index(c) for c in EXTENDED_C
 
 
 def process(path):
-    threads, parsed_files = divide_in_threads(path, before_ranking=True)
+    threads, parsed_files = divide_in_threads(path)
 
     results = []
     for category in EXTENDED_CATEGORIES:
