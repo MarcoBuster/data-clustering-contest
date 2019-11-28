@@ -38,6 +38,14 @@ languages_1115_00:
   script:
     - time python start.py languages data/20191115/00/
 
+languages_max:
+  stage: languages
+  when: always
+  script:
+    - mkdir data/max
+    - mv data/*/*/*.html data/max/
+    - time python start.py languages max/
+
 
 news_1101_12:
   stage: news
@@ -56,6 +64,14 @@ news_1115_00:
   when: always
   script:
     - time python start.py news data/20191115/00/
+
+news_max:
+  stage: news
+  when: always
+  script:
+    - mkdir data/max
+    - mv data/*/*/*.html data/max/
+    - time python start.py news max/
 
 
 categories_1101_12:
@@ -76,6 +92,14 @@ categories_1115_00:
   script:
     - time python start.py categories data/20191115/00/
 
+categories_max:
+  stage: categories
+  when: always
+  script:
+    - mkdir data/max
+    - mv data/*/*/*.html data/max/
+    - time python start.py categories max/
+
 
 threads_1101_12:
   stage: threads
@@ -95,6 +119,14 @@ threads_1115_00:
   script:
     - time python start.py threads data/20191115/00/
 
+threads_max:
+  stage: threads
+  when: always
+  script:
+    - mkdir data/max
+    - mv data/*/*/*.html data/max/
+    - time python start.py threads max/
+
 
 top_1101_12:
   stage: top
@@ -113,3 +145,11 @@ top_1115_00:
   when: always
   script:
     - time python start.py top data/20191115/00/
+
+top_max:
+  stage: top
+  when: always
+  script:
+    - mkdir data/max
+    - mv data/*/*/*.html data/max/
+    - time python start.py top max/
