@@ -1,6 +1,6 @@
 Introduction
 ============
-I chose to use Python 3 because I find it very useful when working with strings.
+I chose to use Python 3 because I find it very useful when working with strings and large dicts; the performance is enough.
 To parse the HTML I use a very light library (lxml), which returns the title and the text of the article. Given the high RAM capacity available and the importance of performance, throughout the process the file is opened only once and then is saved in RAM.
 To categorize the text I generate n-grams[1] for each HTML file and compare them with the saved profiles [see training]; to divide the news into threads the program compares the n-grams between the files themselves: articles with a distance below a certain threshold are considered to belong to the same thread.
 The software uses the multiprocessing feature, and with it the software operates by default with slow operations with 8 processes at time (the number of CPU cores). You can change this value in the configuration file. I use processes and not threads because after a few tries I came to the conclusion that they are faster. 
@@ -16,9 +16,9 @@ Read the comments in the file for more information about the individual fields.
 
 Running in production
 =====================
-The tgnews.sh script enters in the Python virtualenv at every execution. 
-I put this to avoid having to install Python dependencies with pip, but you can only do this once: remove the "source ./venv/bin/activate" line in tgnews.sh after the first run. 
-You can install the dipendences system-wide without the need of virtualenvs by running:
+The tgnews script enters in the Python virtualenv at every execution.
+I put this to avoid having to install Python dependencies with pip, but you can only do this once: remove the "source ./venv/bin/activate" line in tgnews after the first run.
+You can install the dependencies system-wide without the need of virtualenvs by running:
 $ sudo python3 -m pip install -r python-requirements.txt
 
 
@@ -39,7 +39,7 @@ If you want to train your profiles with more data, here's how to do it:
 
 Notes
 =====
-I can't say if whether the categorization in Russian is precise or not, because it's a language that I don't understand. The concept is the same, and
+I can't tell if whether the categorization in Russian is precise or not, because it's a language that I don't understand. The concept is the same, and
 if it's not very good you can generate better profiles using the guide above.
 Once the profiles are generated, the software can work with any other language, it is only necessary to edit the configuration file.
 

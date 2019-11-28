@@ -27,7 +27,7 @@ def main():
     if action == "languages":
         src_main.language(path)
 
-    if action == "news":
+    elif action == "news":
         src_main.news(path)
 
     elif action == "categories":
