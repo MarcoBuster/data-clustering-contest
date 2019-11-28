@@ -7,7 +7,7 @@ from .. import parser
 import multiprocessing as mp
 
 
-def divide_in_threads(path):
+def divide_in_threads(path, before_ranking=False):
     ngrams = []
     parsed_files = []
     index_parsed_files = {}
@@ -16,7 +16,7 @@ def divide_in_threads(path):
     files = glob.glob(path + "*.html")
     for file in files:
         futures[file] = pool.apply_async(parser.generate_parsed_file, (file, ), {
-            'pre_compute': ('news_score', 'ranking_score', 'short_ngrams', 'lang'),
+            'pre_compute': ('news_score', 'ranking_score', 'short_ngrams', 'lang', 'category' if before_ranking else ''),
         })
     pool.close()
     pool.join()

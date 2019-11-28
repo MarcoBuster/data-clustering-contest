@@ -1,57 +1,11 @@
 import glob
 import multiprocessing as mp
-import pickle
-
-import nltk
 
 import config
 from .. import parser
-from ..training.train import generate_ngrams
-
-
-def _read_profile(lang, cat):
-    with open(f'{config.PROFILE_DATA}/{lang}_{cat}.pickle', 'rb') as pf:
-        return pickle.load(pf)
-
-
-def load_cat_profiles():
-    cat_profiles = {"en": [], "ru": []}
-    for category in config.CATEGORIES:
-        cat_profiles["en"].append(_read_profile("en", category))
-        cat_profiles["ru"].append(_read_profile("ru", category))
-    return cat_profiles
-
-
-def cat_contents(contents, lang, cat_profiles, ngrams=None):
-    ngrams = generate_ngrams(contents) if not ngrams else ngrams
-    guesses = {c: 0 for c in config.CATEGORIES}
-    iter_cat = iter(config.CATEGORIES)
-    for category in cat_profiles[lang]:
-        guesses[next(iter_cat)] = nltk.jaccard_distance(ngrams, category)
-
-    min_value = min(guesses, key=guesses.get)
-    if guesses[min_value] > config.CATEGORIZATION_MAX_DISTANCE:
-        guess = "other"
-    else:
-        guess = min_value
-    return guess
-
-
-def cat_parsed_file(parsed_file, cat_profiles):
-    if parsed_file.lang() not in config.LANGUAGES:
-        return None
-    if not parsed_file.news_score():
-        return None
-    return cat_contents(parsed_file.contents, parsed_file.lang(), cat_profiles, ngrams=parsed_file.ngrams())
-
-
-def _cat_file(file_path, cat_profiles):
-    parsed_file = parser.ParsedFile(file_path)
-    return cat_parsed_file(parsed_file, cat_profiles)
 
 
 def process(path):
-    cat_profiles = load_cat_profiles()
     result = []
     for category in config.CATEGORIES:
         result.append({
@@ -67,13 +21,18 @@ def process(path):
     futures = {}
     pool = mp.Pool(processes=config.CONCURRENT_PROCESSES)
     for file in files:
-        futures[file.split('/')[-1]] = pool.apply_async(_cat_file, (file, cat_profiles))
+        futures[file.split('/')[-1]] = pool.apply_async(parser.generate_parsed_file, (file, ), {
+            'pre_compute': ('category', 'news_score', )
+        })
     pool.close()
     pool.join()
 
     for file in futures:
-        guess = futures[file].get()
-        if guess is None:
+        parsed_file = futures[file].get()
+        if parsed_file.lang() not in config.LANGUAGES:
             continue
-        result[result.index(next(i for i in result if i["category"] == guess))]["articles"].append(file)
+        if not parsed_file.news_score():
+            continue
+
+        result[result.index(next(i for i in result if i["category"] == parsed_file.category()))]["articles"].append(file)
     return result

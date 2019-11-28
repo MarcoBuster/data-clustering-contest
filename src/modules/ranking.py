@@ -1,14 +1,13 @@
 import config
-from .categorization import load_cat_profiles, cat_contents
 from .news_threads import divide_in_threads
+import time
 
 EXTENDED_CATEGORIES = [*config.CATEGORIES, "other", "any"]
 EXTENDED_CATEGORIES_INDEX = {c: EXTENDED_CATEGORIES.index(c) for c in EXTENDED_CATEGORIES}
 
 
 def process(path):
-    threads, index_parsed_files = divide_in_threads(path)
-    cat_profiles = load_cat_profiles()
+    threads, parsed_files = divide_in_threads(path, before_ranking=True)
 
     result = []
     for category in EXTENDED_CATEGORIES:
@@ -18,20 +17,18 @@ def process(path):
         })
 
     for thread in threads:
-        thread_contents = ""
+        thread_categories = []
         if len(thread["articles"]) == 0:
             continue
         for file in thread["articles"]:
-            thread_contents += ('\n' + index_parsed_files[file].contents)
-        category = cat_contents(thread_contents, index_parsed_files[file].lang(), cat_profiles)
-        if category is None:
-            category = "other"
+            thread_categories.append(parsed_files[file].category())
+        category = max(set(thread_categories), key=thread_categories.count)
         result[EXTENDED_CATEGORIES_INDEX[category]]["threads"].append(thread)
         result[EXTENDED_CATEGORIES_INDEX["any"]]["threads"].append(thread)
 
     for i in range(len(result)):
         result[i]["threads"].sort(
-            key=lambda t: sum([*[index_parsed_files[e].ranking_score() for e in t["articles"]], len(t["articles"]) * 2]),
+            key=lambda t: sum([*[parsed_files[e].ranking_score() for e in t["articles"]], len(t["articles"]) * 2]),
             reverse=True
         )
     return result

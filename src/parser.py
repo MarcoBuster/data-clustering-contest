@@ -1,7 +1,6 @@
 import lxml.html as html_parser
 
 import config
-from .modules import lang_detect
 from .training import train
 import nltk
 import pickle
@@ -48,15 +47,20 @@ NOT_NEWS_WORDS = [
 
 
 def generate_parsed_file(filename, *args, **kwargs):
-    # This is need in multiprocessing functions
+    # This is needed in multiprocessing functions
     return ParsedFile(filename, *args, **kwargs)
 
 
 class ParsedFile:
     _language_profiles = {}
+    _cat_profiles = dict((l, dict()) for l in config.LANGUAGES)
     for lang in config.LANGUAGES:
         with open(config.PROFILE_DATA + '/' + lang + '.pickle', 'rb') as f:
             _language_profiles[lang] = pickle.load(f)
+
+        for cat in config.CATEGORIES:
+            with open(f"{config.PROFILE_DATA}/{lang}_{cat}.pickle", 'rb') as cf:
+                _cat_profiles[lang][cat] = pickle.load(cf)
 
     def __init__(self, filename, pre_compute=()):
         self._filename = filename
@@ -71,6 +75,7 @@ class ParsedFile:
         self._short_ngrams = None
         self._stopwords_ngrams = None
         self._lang = None
+        self._category = None
         self._ranking_score = None
         self._news_score = None
 
@@ -86,6 +91,8 @@ class ParsedFile:
 
         if 'lang' in pre_compute:
             self.lang()
+        if 'category' in pre_compute:
+            self.category()
         if 'ranking_score' in pre_compute:
             self.ranking_score()
         if 'news_score' in pre_compute:
@@ -98,7 +105,7 @@ class ParsedFile:
             self.stopwords_ngrams()
 
     def lang(self):
-        if self._lang:
+        if self._lang is not None:
             return self._lang
 
         stopwords_ngrams = self.stopwords_ngrams()
@@ -106,11 +113,31 @@ class ParsedFile:
         for lang in guesses:
             guesses[lang] = nltk.jaccard_distance(stopwords_ngrams, ParsedFile._language_profiles[lang])
         best_guess = min(guesses, key=guesses.get)
+
         if guesses[best_guess] > config.LANGUAGE_MAX_DISTANCE:
             best_guess = "other"
-
         self._lang = best_guess
         return self._lang
+
+    def category(self):
+        if self._category is not None:
+            return self._category
+
+        if self.lang() not in config.LANGUAGES:
+            self._category = "other"
+            return self._category
+
+        guesses = {c: 0 for c in config.CATEGORIES}
+        iter_cat = iter(config.CATEGORIES)
+        for category in ParsedFile._cat_profiles[self.lang()]:
+            guesses[next(iter_cat)] = nltk.jaccard_distance(self.ngrams(), ParsedFile._cat_profiles[self.lang()][category])
+
+        min_value = min(guesses, key=guesses.get)
+        if guesses[min_value] > config.CATEGORIZATION_MAX_DISTANCE:
+            self._category = "other"
+        else:
+            self._category = min_value
+        return self._category
 
     def ranking_score(self):
         if self._ranking_score is not None:
