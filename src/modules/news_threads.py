@@ -12,7 +12,7 @@ def _get_similar_articles(parsed_files):
     similar = []
     for i in range(length):
         for j in range(length):
-            if j < i:
+            if j <= i:
                 continue
             if not parsed_files[i] or not parsed_files[j]:
                 continue
