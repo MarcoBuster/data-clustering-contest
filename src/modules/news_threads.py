@@ -7,6 +7,22 @@ from .. import parser
 import multiprocessing as mp
 
 
+def _get_similar_articles(parsed_files):
+    length = len(parsed_files)
+    similar = []
+    for i in range(length):
+        for j in range(length):
+            if j < i:
+                continue
+            if not parsed_files[i] or not parsed_files[j]:
+                continue
+            dist = nltk.jaccard_distance(parsed_files[i].short_ngrams(),
+                                         parsed_files[j].short_ngrams())
+            if dist < config.THREADING_MAX_DISTANCE and dist != 0:
+                similar.append((parsed_files[i], parsed_files[j]))
+    return similar
+
+
 def divide_in_threads(path):
     pool = mp.Pool(processes=config.CONCURRENT_PROCESSES)
     futures = {}
@@ -30,20 +46,17 @@ def divide_in_threads(path):
         parsed_files[parsed_file.lang()][parsed_file.category()].append(parsed_file)
         index_parsed_files[parsed_file.filename] = parsed_file
 
-    similar = []
+    pool = mp.Pool(processes=config.CONCURRENT_PROCESSES)
+    futures = []
     for lang in parsed_files:
         for cat in parsed_files[lang]:
-            length = len(parsed_files[lang][cat])
-            for i in range(length):
-                for j in range(length):
-                    if j < i:
-                        continue
-                    if not parsed_files[lang][cat][i] or not parsed_files[lang][cat][j]:
-                        continue
-                    dist = nltk.jaccard_distance(parsed_files[lang][cat][i].short_ngrams(),
-                                                 parsed_files[lang][cat][j].short_ngrams())
-                    if dist < config.THREADING_MAX_DISTANCE and dist != 0:
-                        similar.append((parsed_files[lang][cat][i], parsed_files[lang][cat][j]))
+            futures.append(pool.apply_async(_get_similar_articles, kwds={
+                'parsed_files': parsed_files[lang][cat],
+            }))
+
+    similar = []
+    for future in futures:
+        similar.extend(future.get())
 
     results = []
     for element in similar:
