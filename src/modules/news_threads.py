@@ -53,6 +53,8 @@ def divide_in_threads(path):
             futures.append(pool.apply_async(_get_similar_articles, kwds={
                 'parsed_files': parsed_files[lang][cat],
             }))
+    pool.close()
+    pool.join()
 
     similar = []
     for future in futures:

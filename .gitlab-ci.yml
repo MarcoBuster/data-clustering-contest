@@ -105,21 +105,18 @@ threads_1101_12:
   stage: threads
   when: always
   script:
-    - echo "CONCURRENT_PROCESSES=1" >> config.py
     - time python start.py threads data/20191101/12/
 
 threads_1108_18:
   stage: threads
   when: always
   script:
-    - echo "CONCURRENT_PROCESSES=1" >> config.py
     - time python start.py threads data/20191108/18/
 
 threads_1115_00:
   stage: threads
   when: always
   script:
-    - echo "CONCURRENT_PROCESSES=1" >> config.py
     - time python start.py threads data/20191115/00/
 
 threads_max:
@@ -128,7 +125,6 @@ threads_max:
   script:
     - mkdir data/max
     - mv data/*/*/*.html data/max/
-    - echo "CONCURRENT_PROCESSES=1" >> config.py
     - time python start.py threads data/max/
 
 
@@ -136,21 +132,18 @@ top_1101_12:
   stage: top
   when: always
   script:
-    - echo "CONCURRENT_PROCESSES=1" >> config.py
     - time python start.py top data/20191101/12/
 
 top_1108_18:
   stage: top
   when: always
   script:
-    - echo "CONCURRENT_PROCESSES=1" >> config.py
     - time python start.py top data/20191108/18/
 
 top_1115_00:
   stage: top
   when: always
   script:
-    - echo "CONCURRENT_PROCESSES=1" >> config.py
     - time python start.py top data/20191115/00/
 
 top_max:
@@ -159,5 +152,4 @@ top_max:
   script:
     - mkdir data/max
     - mv data/*/*/*.html data/max/
-    - echo "CONCURRENT_PROCESSES=1" >> config.py
     - time python start.py top data/max/
