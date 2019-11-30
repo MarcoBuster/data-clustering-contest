@@ -80,7 +80,7 @@ def divide_in_threads(path):
     files = glob.glob(path + "*.html")
     for file in files:
         futures[file] = pool.apply_async(parser.generate_parsed_file, (file, ), {
-            'pre_compute': ('news_score', 'ranking_score', 'short_ngrams', 'lang', 'category'),
+            'pre_compute': ('news_score', 'short_ngrams', 'lang', 'category'),
         })
     pool.close()
     pool.join()
@@ -122,7 +122,7 @@ def divide_in_threads(path):
 
     for i in range(len(results)):
         results[i]["title"] = index_parsed_files[min(results[i]["articles"], key=lambda e: len(index_parsed_files[e].title))].title
-        results[i]["articles"].sort(key=lambda e: index_parsed_files[e].ranking_score(), reverse=True)
+        results[i]["articles"].sort(key=lambda e: index_parsed_files[e].ranking_score, reverse=True)
 
     return results, index_parsed_files
 

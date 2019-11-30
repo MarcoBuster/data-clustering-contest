@@ -73,7 +73,6 @@ class ParsedFile:
         self._filename = filename
         self.filename = self._filename.split('/')[-1]
 
-        self.raw_contents = None
         self.contents = None
         self.title = None
 
@@ -83,27 +82,32 @@ class ParsedFile:
         self._stopwords_ngrams = None
         self._lang = None
         self._category = None
-        self._ranking_score = None
         self._news_score = None
 
         # Open and parse the file
         with open(self._filename, 'r') as f:
-            self.raw_contents = f.read()
-        html_root = html_parser.fromstring(self.raw_contents)
-        _children = html_root.getchildren()
+            _raw_contents = f.read()
+        _html_root = html_parser.fromstring(_raw_contents)
+        _children = _html_root.getchildren()
         _, body = _children[0], _children[1]
         _article = body.getchildren()[0]
         self.title = _article.xpath('normalize-space(//h1)')
         self.contents = _article.text_content()
-        self._stopwords_ngrams = None
+        words = len(_article.text_content().split())
+        paragraphs = _article.findall("p")
+        links = 0
+        for p in paragraphs:
+            hrefs = len(p.findall("a"))
+            if hrefs > 0:
+                links += hrefs
+        figures = len(_article.findall("figure"))
+        self.ranking_score = (words // 10) + (figures * 3) + (links * 1.5)
 
         # Pre compute statements
         if 'lang' in pre_compute:
             self.lang()
         if 'category' in pre_compute:
             self.category()
-        if 'ranking_score' in pre_compute:
-            self.ranking_score()
         if 'news_score' in pre_compute:
             self.news_score()
         if 'short_ngrams' in pre_compute:
@@ -142,28 +146,6 @@ class ParsedFile:
         else:
             self._category = min_value
         return self._category
-
-    def ranking_score(self):
-        if self._ranking_score is not None:
-            return self._ranking_score
-        if self.lang() not in config.LANGUAGES or not self.news_score():
-            self._ranking_score = 0
-            return self._ranking_score
-
-        html_root = html_parser.fromstring(self.raw_contents)
-        _children = html_root.getchildren()
-        _, body = _children[0], _children[1]
-        _article = body.getchildren()[0]
-        words = len(_article.text_content().split())
-        paragraphs = _article.findall("p")
-        links = 0
-        for p in paragraphs:
-            hrefs = len(p.findall("a"))
-            if hrefs > 0:
-                links += hrefs
-        figures = len(_article.findall("figure"))
-        _ranking_score = (words // 10) + (figures * 3) + (links * 1.5)
-        return _ranking_score
 
     def news_score(self):
         if self._news_score is not None:

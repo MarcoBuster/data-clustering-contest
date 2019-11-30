@@ -27,7 +27,7 @@ def process(path):
 
     for i in range(len(results)):
         results[i]["threads"].sort(
-            key=lambda t: sum([*[parsed_files[e].ranking_score() for e in t["articles"]], len(t["articles"]) * 2]),
+            key=lambda t: sum([*[parsed_files[e].ranking_score for e in t["articles"]], len(t["articles"]) * 2]),
             reverse=True
         )
     return results
