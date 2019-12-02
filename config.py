@@ -24,7 +24,7 @@ MAX_NGRAMS = 350
 LANGUAGE_MAX_DISTANCE = 0.87
 
 # Max jaccard distance for considering an article in a category
-CATEGORIZATION_MAX_DISTANCE = 0.97
+CATEGORIZATION_MAX_DISTANCE = 0.95
 
 # Max jaccard distance for considering two articles in the same thread
-THREADING_MAX_DISTANCE = 0.96
+THREADING_MAX_DISTANCE = 0.95
