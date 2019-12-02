@@ -3,7 +3,7 @@ Introduction
 I chose to use Python 3 because I find it very useful when working with strings and large dicts; the performance is enough.
 To parse the HTML I use a very light library (lxml), which returns the title and the text of the article. Given the high RAM capacity available and the importance of performance, throughout the process the file is opened only once and then is saved in RAM.
 To categorize the text I generate n-grams[1] for each HTML file and compare them with the saved profiles [see training]; to divide the news into threads the program compares the n-grams between the files themselves: articles with a distance below a certain threshold are considered to belong to the same thread.
-The software uses the multiprocessing feature, and with it the software operates by default with slow operations with 8 processes at time (the number of CPU cores). You can change this value in the configuration file. I use processes and not threads because after a few tries I came to the conclusion that they are faster. 
+The software uses the multiprocessing feature, and with it the software operates by default with slow operations with 8 processes at time (the number of CPU cores). You can change this value in the configuration file.
 
 I wrote this project as modular as possible (without sacrificing speed), and it is easy to extend the code with other features.
 

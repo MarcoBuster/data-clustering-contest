@@ -181,7 +181,7 @@ class ParsedFile:
             self._short_ngrams = {}
             return self._short_ngrams
 
-        ngram_string = self.title + ' '.join(self.contents.split()[:20])
+        ngram_string = self.title + ' '.join(self.contents.split()[:50])
         self._short_ngrams = train.generate_ngrams(ngram_string, 3)
         return self._short_ngrams
 
